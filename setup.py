@@ -1,7 +1,7 @@
 from setuptools import setup
 import os, io
 
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 
 here = os.path.abspath(os.path.dirname(__file__))
 README = io.open(os.path.join(here, 'README.md'), encoding='UTF-8').read()
