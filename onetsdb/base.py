@@ -76,6 +76,9 @@ class TSDBBase(object):
     def drop_table(self, table):
         raise NotImplemented
 
+    def close(self):
+        raise NotImplemented
+
 
 class TSDBQuery(object):
     def __init__(self, tsdb, table, options=None):
@@ -129,6 +132,9 @@ class TSDBQuery(object):
     def last(self):
         return self.tsdb.last_with_query(self)
 
+    def all(self):
+        return list(self)
+
 
 def connect(uri):
     '''
@@ -136,7 +142,6 @@ def connect(uri):
     :param uri: the bus server uri, example: mqtt://localhost:1883 , redis://user:secret@localhost:6379/0
     :return: Bus instance
     '''
-    import re
     try:
         import urlparse as parse
     except:
@@ -161,6 +166,16 @@ def connect(uri):
         # client.write_points()
         # client.switch_database(dbname)
         tsdb = InfluxTSDB(db)
+    elif res.scheme == 'sqlite3':
+        # sqlite3
+        import sqlite3
+        from rsdb import Sqlite3TSDB
+        path = res.path
+        if 'file::memory:' in path:
+            # momery db
+            path = 'file::memory:'
+        con = sqlite3.connect(path)
+        tsdb = Sqlite3TSDB(con)
     else:
         raise TSDBException('Unknow uri: %s' % uri)
     return tsdb

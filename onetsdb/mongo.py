@@ -132,3 +132,6 @@ class MongoTSDB(TSDBBase):
 
     def drop_table(self, table):
         self._get_collection(table).drop()
+
+    def close(self):
+        pass
