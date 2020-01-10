@@ -34,8 +34,7 @@ tsdb.write_point('device', TSDBPoint(data={'devid': 'A1', 'temp': 24.5, 'humi': 
 
 print tsdb.query('device').filter(devid='A1').all()
 
-
 ```
 
 
-[Click to view more information!](https://github.com/sintrb/pbus)
+[Click to view more information!](https://github.com/sintrb/onetsdb)
