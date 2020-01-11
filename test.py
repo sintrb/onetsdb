@@ -26,7 +26,7 @@ def do_test(con, table='test', count=100):
 
         def display(self):
             off = time.time() - self._start
-            print('time cost', off, 'count', self._counter, 'speed', self._counter / off)
+            print('time cost', off, 'count', self._counter, 'speed', self._counter / off, '/ s')
             self._last = time.time()
 
         def stop(self):
@@ -74,7 +74,6 @@ def do_test(con, table='test', count=100):
         }
         sp.feed()
         pt = TSDBPoint(time=tm, data=data)
-        # print(pt)
         tsdb.write_point(table, pt)
         # break
     sp.display()
@@ -105,7 +104,7 @@ def do_test(con, table='test', count=100):
     # tsdb.query(table).delete()
     # assert tsdb.query(table).filter().count() == 0
 
-    # tsdb.drop_table(table)
+    tsdb.drop_table(table)
     tsdb.close()
     sp.stop()
 
@@ -113,16 +112,26 @@ def do_test(con, table='test', count=100):
 if __name__ == '__main__':
     import sys
 
-    # uri = 'mongodb://localhost/tsdb'
-    # uri = 'influxdb://localhost/tsdb'
-    uri = 'sqlite3://localhost/tmp/tsdb.sqlite3'
-    # uri = 'sqlite3://localhost/file::memory:'
+    uris = [
+        'mongodb://localhost/tsdb',
+        'mongodb://172.16.1.211/tsdb',
+        'influxdb://localhost/tsdb',
+        'influxdb://172.16.1.211/?db=tsdb5',
+        'sqlite3://localhost/?db=/tmp/tt.sqlite3',
+        'sqlite3://localhost/tmp/tsdb.sqlite3',
+        'sqlite3://localhost/file::memory:',
+    ]
+
+    if len(sys.argv) >= 1:
+        uris = [sys.argv[1]]
     table = 'test'
     count = 100
-    if len(sys.argv) > 1:
-        uri = sys.argv[1]
     if len(sys.argv) > 2:
         table = sys.argv[2]
     if len(sys.argv) > 3:
         count = int(sys.argv[3])
-    do_test(uri, table, count)
+    for uri in uris:
+        print('++++++ begin %s +++++++++' % uri)
+        do_test(uri, table, count)
+        print('------  end %s  ---------' % uri)
+        print()

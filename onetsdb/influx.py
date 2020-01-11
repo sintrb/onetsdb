@@ -192,3 +192,6 @@ class InfluxTSDB(TSDBBase):
 
     def close(self):
         pass
+
+    def commit(self):
+        pass

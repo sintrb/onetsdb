@@ -4,6 +4,6 @@ Created on 2019-10-22
 '''
 
 from .base import connect, TSDBPoint, TSDBBase
-import influx, mongo, rsdb
+from . import influx, mongo, sqlite
 
-__version__ = '1.2.1'
+__version__ = '1.2.4'

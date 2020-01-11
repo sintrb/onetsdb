@@ -79,6 +79,9 @@ class TSDBBase(object):
     def close(self):
         raise NotImplemented
 
+    def commit(self):
+        raise NotImplemented
+
 
 class TSDBQuery(object):
     def __init__(self, tsdb, table, options=None):
@@ -147,12 +150,18 @@ def connect(uri):
     except:
         from urllib import parse
     res = parse.urlparse(uri)
+    param = parse.parse_qs(res.query)
+    dbname = res.path
+    if param.get('db'):
+        dbname = param['db'][0]
+    if not dbname.strip():
+        dbname = 'tsdb'
     if res.scheme == 'mongodb':
         # MongoDB
         from pymongo import MongoClient
         from .mongo import MongoTSDB
         client = MongoClient(host=res.hostname, port=int(res.port or 27017), username=res.username or None, password=res.password or None)
-        dbname = (res.path or 'tsdb').strip('/')
+        dbname = dbname.strip('/')
         db = client.get_database(dbname)
         tsdb = MongoTSDB(db)
     elif res.scheme == 'influxdb':
@@ -160,22 +169,18 @@ def connect(uri):
         from influxdb import InfluxDBClient
         from .influx import InfluxDB, InfluxTSDB
         client = InfluxDBClient(host=res.hostname, port=int(res.port or 8086), username=res.username or None, password=res.password or None)
-        dbname = (res.path or 'tsdb').strip('/')
+        dbname = dbname.strip('/')
         db = InfluxDB(dbname, client)
-        # print(client.create_database(dbname))
-        # client.write_points()
-        # client.switch_database(dbname)
         tsdb = InfluxTSDB(db)
     elif res.scheme == 'sqlite3':
         # sqlite3
         import sqlite3
-        from rsdb import Sqlite3TSDB
-        path = res.path
-        if 'file::memory:' in path:
+        from .sqlite import SqliteTSDB
+        if 'file::memory:' in dbname:
             # momery db
-            path = 'file::memory:'
-        con = sqlite3.connect(path)
-        tsdb = Sqlite3TSDB(con)
+            dbname = 'file::memory:'
+        con = sqlite3.connect(dbname, check_same_thread=False)
+        tsdb = SqliteTSDB(con)
     else:
         raise TSDBException('Unknow uri: %s' % uri)
     return tsdb

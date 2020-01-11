@@ -7,3 +7,6 @@ CHANGES
 1.2.0
 
 - support mongodb, influxdb, sqlite3
+
+1.2.4
+- fix sqlite3 bug

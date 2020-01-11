@@ -12,7 +12,7 @@ from .base import TSDBPoint, TSDBBase
 TIME_FIELD = '_time'
 
 
-class Sqlite3TSDB(TSDBBase):
+class SqliteTSDB(TSDBBase):
     '''
     Wrapper for sqlite3
     '''
@@ -136,6 +136,7 @@ class Sqlite3TSDB(TSDBBase):
                 # self._execute('ALTER TABLE `%s` DROP COLUMN `%s`;' % (table, k))
         define.update(options)
         self._set_table_define(table, define)
+        self.commit()
 
     def _to_db_time(self, tm):
         if isinstance(tm, datetime.datetime):
@@ -148,7 +149,6 @@ class Sqlite3TSDB(TSDBBase):
         return tm
 
     def write_points(self, table, points):
-        pts = []
         td = self._get_table_define(table)
         tmd = self._define_to_dict(td)
         for p in points:
@@ -163,9 +163,9 @@ class Sqlite3TSDB(TSDBBase):
             self._execute('INSERT INTO `%s` (%s) VALUES (%s);' % (table,
                                                                   ','.join(['`%s`' % r[0] for r in vals]),
                                                                   ','.join('?' * len(vals))), *[r[1] for r in vals])
-        if pts:
-            pass
-        return len(pts)
+        if points:
+            self.con.commit()
+        return len(points)
 
     def _get_where_sql_with_query(self, query):
         where = {}
@@ -246,6 +246,10 @@ class Sqlite3TSDB(TSDBBase):
             self._execute('DROP TABLE `%s`' % table)
         except:
             pass
+        self.commit()
 
     def close(self):
         self.con.close()
+
+    def commit(self):
+        self.con.commit()

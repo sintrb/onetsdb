@@ -135,3 +135,6 @@ class MongoTSDB(TSDBBase):
 
     def close(self):
         pass
+
+    def commit(self):
+        pass
