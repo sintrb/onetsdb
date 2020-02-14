@@ -104,6 +104,8 @@ def do_test(con, table='test', count=100):
     # tsdb.query(table).delete()
     # assert tsdb.query(table).filter().count() == 0
 
+    assert len(list(tsdb.query(table))) == count - 1
+
     tsdb.drop_table(table)
     tsdb.close()
     sp.stop()

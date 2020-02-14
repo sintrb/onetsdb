@@ -147,7 +147,7 @@ class InfluxTSDB(TSDBBase):
             yield self._db_data_to_point(d, td)
 
     def fetch_with_query(self, query):
-        return self._fetch_with_resultset(self._exec_influxql(self._create_influxql_with_query(query, fields='*')))
+        return self._fetch_with_resultset(self._exec_influxql(self._create_influxql_with_query(query, fields='*')), query)
 
     def count_with_query(self, query):
         key = self._get_table_define(query.table)['_count_field']
