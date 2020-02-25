@@ -10,3 +10,6 @@ CHANGES
 
 1.2.4
 - fix sqlite3 bug
+
+1.3.0
+- support tslite

@@ -59,7 +59,7 @@ def do_test(con, table='test', count=100):
     })
 
     st = datetime.datetime(year=2019, month=1, day=1, hour=0, minute=0, second=0)
-    tsdb.query(table).delete()
+    # tsdb.query(table).delete()
     sp = SpeedIt()
     print('insert...')
     sp.start()
@@ -97,16 +97,16 @@ def do_test(con, table='test', count=100):
     assert tsdb.query(table).filter().time_range(st, st).first().time == st
 
     assert tsdb.query(table).filter(x=2).first() != None
-    tsdb.query(table).filter(x=2).delete()
-    assert tsdb.query(table).filter().count() == count - 1
-    assert tsdb.query(table).filter(x=2).first() == None
+    # tsdb.query(table).filter(x=2).delete()
+    # assert tsdb.query(table).filter().count() == count - 1
+    # assert tsdb.query(table).filter(x=2).first() == None
 
     # tsdb.query(table).delete()
     # assert tsdb.query(table).filter().count() == 0
 
-    assert len(list(tsdb.query(table))) == count - 1
+    # assert len(list(tsdb.query(table))) == count - 1
 
-    tsdb.drop_table(table)
+    # tsdb.drop_table(table)
     tsdb.close()
     sp.stop()
 
@@ -116,18 +116,19 @@ if __name__ == '__main__':
 
     uris = [
         'mongodb://localhost/tsdb',
-        'mongodb://172.16.1.211/tsdb',
+        # 'mongodb://172.16.1.211/tsdb',
         'influxdb://localhost/tsdb',
-        'influxdb://172.16.1.211/?db=tsdb5',
+        # 'influxdb://172.16.1.211/?db=tsdb5',
         'sqlite3://localhost/?db=/tmp/tt.sqlite3',
-        'sqlite3://localhost/tmp/tsdb.sqlite3',
+        # 'sqlite3://localhost/tmp/tsdb.sqlite3',
         'sqlite3://localhost/file::memory:',
+        'tslite://localhost/tmp/tslite/test',
     ]
 
-    if len(sys.argv) >= 1:
+    if len(sys.argv) > 1:
         uris = [sys.argv[1]]
     table = 'test'
-    count = 100
+    count = 10000
     if len(sys.argv) > 2:
         table = sys.argv[2]
     if len(sys.argv) > 3:

@@ -17,6 +17,7 @@ from onetsdb import connect, TSDBPoint
 # tsdb = connect('mongodb://localhost/tsdb')
 # tsdb = connect('influxdb://localhost/tsdb')
 # tsdb = connect('sqlite3://localhost/tmp/tsdb.sqlite3')  # file: with/tmp/tsdb.sqlite3,
+# tsdb = connect('tslite://localhost/tmp/tslite/test')  # tslite
 tsdb = connect('sqlite3://localhost/file::memory:')  # with memory sqlite3
 
 tsdb.register_table('device', {

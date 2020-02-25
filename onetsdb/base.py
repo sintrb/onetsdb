@@ -176,11 +176,17 @@ def connect(uri):
         # sqlite3
         import sqlite3
         from .sqlite import SqliteTSDB
-        if 'file::memory:' in dbname:
+        if ':memory:' in dbname:
             # momery db
-            dbname = 'file::memory:'
+            dbname = ':memory:'
         con = sqlite3.connect(dbname, check_same_thread=False)
         tsdb = SqliteTSDB(con)
+    elif res.scheme == 'tslite':
+        # tslite
+        import tslite
+        from .xtslite import TsliteTSDB
+        db = tslite.Database(dbname)
+        tsdb = TsliteTSDB(db=db)
     else:
         raise TSDBException('Unknow uri: %s' % uri)
     return tsdb
