@@ -7,6 +7,25 @@ from __future__ import print_function
 
 NotImplemented = NotImplementedError()
 
+str_types = tuple({type(''), type(u'')})
+
+DATETIME_FORMATS = ['%Y-%m-%d %H:%M:%S',
+                    '%Y/%m/%d %H:%M:%S',
+                    '%Y-%m-%d %H:%M',
+                    '%Y/%m/%d %H:%M',
+                    '%Y-%m-%d %H',
+                    '%Y/%m/%d %H',
+                    '%Y-%m-%d', ]
+
+
+def try_parset_datetime_str(s):
+    import datetime
+    for f in DATETIME_FORMATS:
+        try:
+            return datetime.datetime.strptime(s, f)
+        except:
+            pass
+
 
 class TSDBException(Exception):
     pass
@@ -114,6 +133,16 @@ class TSDBQuery(object):
         q.options['time_end'] = end
         return q
 
+    def time_group(self, group):
+        q = self.copy()
+        q.options['time_group'] = group
+        return q
+
+    def values(self, **kwargs):
+        q = self.copy()
+        q.options['values'] = kwargs
+        return q
+
     def all(self):
         return list(self)
 
@@ -134,9 +163,6 @@ class TSDBQuery(object):
 
     def last(self):
         return self.tsdb.last_with_query(self)
-
-    def all(self):
-        return list(self)
 
 
 def connect(uri):
@@ -190,3 +216,39 @@ def connect(uri):
     else:
         raise TSDBException('Unknow uri: %s' % uri)
     return tsdb
+
+
+class Aggregate(object):
+    def __init__(self, field):
+        self.field = field
+
+
+class Sum(Aggregate):
+    pass
+
+
+class Max(Aggregate):
+    pass
+
+
+class Min(Aggregate):
+    pass
+
+
+class Mean(Aggregate):
+    pass
+
+
+Avg = Mean
+
+
+class Count(Aggregate):
+    pass
+
+
+class First(Aggregate):
+    pass
+
+
+class Last(Aggregate):
+    pass
